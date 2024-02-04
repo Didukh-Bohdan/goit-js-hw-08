@@ -88,7 +88,7 @@ return galleryItem;
 
 function openModal(imageSource) {
 const instance = basicLightbox.create(`
-    <img src="${imageSource}" width="800" height="600">
+    <img src="${imageSource}" width="600" height="450">
 `);
 
 instance.show();
