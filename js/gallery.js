@@ -70,47 +70,42 @@ function createGalleryItem(image) {
 const galleryItem = document.createElement('li');
 galleryItem.classList.add('gallery-item');
 
-const galleryLink = document.createElement('a');
-galleryLink.classList.add('gallery-link');
-galleryLink.href = image.original;
+const link = document.createElement('a');
+link.classList.add('gallery-link');
+link.href = image.original;
 
-const galleryImage = document.createElement('img');
-galleryImage.classList.add('gallery-image');
-galleryImage.src = image.preview;
-galleryImage.dataset.source = image.original;
-galleryImage.alt = image.description;
+const img = document.createElement('img');
+img.classList.add('gallery-image');
+img.src = image.preview;
+img.setAttribute('data-source', image.original);
+img.alt = image.description;
 
-galleryLink.appendChild(galleryImage);
-galleryItem.appendChild(galleryLink);
+link.appendChild(img);
+galleryItem.appendChild(link);
 
 return galleryItem;
 }
 
-images.forEach((image) => {
-const galleryItem = createGalleryItem(image);
-galleryContainer.appendChild(galleryItem);
-});
+function openModal(imageSource) {
+const instance = basicLightbox.create(`
+    <img src="${imageSource}" width="800" height="600">
+`);
 
-galleryContainer.addEventListener('click', (e) => {
-e.preventDefault();
-
-if (e.target.nodeName === 'IMG') {
-    const largeImageSrc = e.target.dataset.source;
-
-    console.log('Large Image Source:', largeImageSrc);
-
-    galleryContainer.addEventListener('click', (e) => {
-e.preventDefault();
-
-if (e.target.nodeName === 'IMG') {
-    const largeImageSrc = e.target.dataset.source;
-
-    const modal = basicLightbox.create(`
-    <img src="${largeImageSrc}" width="800" height="600">
-    `);
-
-    modal.show();
+instance.show();
 }
-});
+
+function handleClick(event) {
+event.preventDefault();
+
+if (event.target.nodeName !== 'IMG') {
+    return;
 }
-});
+
+const imageSource = event.target.dataset.source;
+openModal(imageSource);
+}
+
+galleryContainer.addEventListener('click', handleClick);
+
+const galleryItems = images.map(createGalleryItem);
+galleryContainer.append(...galleryItems);
